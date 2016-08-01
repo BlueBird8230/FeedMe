@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Example 10.3: Layer Manager</title>
+        <title>Feed Me</title>
         <link rel ="icon" type ="image/x-icon" href="./assets/favicon.png">
 
         <!-- the following says there are javascript source code contained in 
@@ -93,13 +93,11 @@
 
         <!-- Client game code -->
         <script type="text/javascript" src="src/MyGame/MyGame.js"></script>
-        <script type="text/javascript" src="src/MyGame/MyGame_Lights.js"></script>
-        <script type="text/javascript" src="src/MyGame/MyGame_LightControl.js"></script>
-        <script type="text/javascript" src="src/MyGame/MyGame_MaterialControl.js"></script>
-        <script type="text/javascript" src="src/MyGame/MyGame_Shadow.js"></script>
+        <script type="text/javascript" src="src/MyGame/MainLevel.js"></script>
+
         <!-- Objects -->
-        <script type="text/javascript" src="src/MyGame/Objects/Hero.js"></script>
-        <script type="text/javascript" src="src/MyGame/Objects/Minion.js"></script>
+        <script type="text/javascript" src="src/MyGame/Objects/Fish.js"></script>
+        <script type="text/javascript" src="src/MyGame/Objects/FishSet.js"></script>
 
     </head>
 
@@ -107,7 +105,7 @@
         var myGame = new MyGame();
         gEngine.Core.initializeEngineCore('GLCanvas', myGame);
      ">
-        <canvas id="GLCanvas" width="1280" height="720">
+        <canvas id="GLCanvas" width="960" height="540">
             <!-- GLCanvas is the area we will draw in: a 640x480 area. -->
             Your browser does not support the HTML5 canvas.
             <!-- this message will show only if WebGL clearing failed -->

@@ -3,13 +3,14 @@
  * This is the logic of our game. 
  */
 
-/*jslint node: true, vars: true, white: true */
-/*global gEngine, Scene, GameObjectset, TextureObject, Camera, vec2,
-  Renderable, TextureRenderable, FontRenderable, SpriteRenderable, LightRenderable, IllumRenderable,
-  GameObject, TiledGameObject, ParallaxGameObject, Hero, Minion, Dye, Light */
-/* find out more about jslint: http://www.jslint.com/help.html */
-
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
+
+var gCanvasWidth = 960;
+var gCanvasHeight = 540;
+var gWorldWidth = 960;
+var gWorldHeight = 540;
+var gViewWidth = 640;
+var gViewHeight = 360;
 
 function MyGame() {
     this.kMinionSprite = "assets/minion_sprite.png";
@@ -31,22 +32,25 @@ MyGame.prototype.unloadScene = function () {
 
 MyGame.prototype.initialize = function () {
     // Step A: set up the cameras
+    /*
     this.mParallaxCam = new Camera(
         vec2.fromValues(25, 40), // position of the camera
         30,                       // width of camera
         [0, 420, 700, 300],           // viewport (orgX, orgY, width, height)
         2
     );
+    */
+    var nextLevel = new MainLevel();
+    gEngine.Core.startScene(nextLevel);
+
 };
 
-// This is the draw function, make sure to setup proper drawing environment, and more
-// importantly, make sure to _NOT_ change any state.
 MyGame.prototype.draw = function () {
     // Step A: clear the canvas
+    //gEngine.Core.clearCanvas([0.9, 0.9, 0.9, 1]);
+    //this.mCamera.setupViewProjection();
 };
 
-// The Update function, updates the application state. Make sure to _NOT_ draw
-// anything from this function!
 MyGame.prototype.update = function () {
 };
 
