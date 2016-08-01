@@ -101,6 +101,9 @@ Fish.prototype._computeNextState = function(){                      // Only when
                     this.mCurrentState = Fish.eFishState.sAngry;
                 }
             }
+            else{
+                this.mTargetPosition = this._getRandomPosition();
+            }
             this.mIsClicked = false;
             break;
         case 1: // Waiting
@@ -139,7 +142,7 @@ Fish.prototype._angry = function(){
 };
 
 Fish.prototype.update = function(){
-    if (gEngine.Input.isButtonClicked(gEngine.Input.mouseButton.Left)) {
+    if (gEngine.Input.isButtonClicked(gEngine.Input.mouseButton.Left) && gCanFeed) {
         var x = this.mCamera.mouseWCX();
         var y = this.mCamera.mouseWCY();
         var pos = vec2.fromValues(x, y);

@@ -28,14 +28,6 @@ FishSet.prototype.addFishes= function(x){
     }
 };
 
-/*
-FishSet.prototype.initialize = function(){
-    var tmpFish = new Fish(300, 300);
-    this.addToSet(tmpFish);
-};
-*/
-
-
 FishSet.prototype.update = function() {
     GameObjectSet.prototype.update.call(this);
 
