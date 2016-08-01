@@ -7,19 +7,37 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-function FishSet() {
+function FishSet(aCamera) {
+    this.mCamera = aCamera;
     GameObjectSet.call(this);
     //this.kSpriteSheet = sprite;
 }
 gEngine.Core.inheritPrototype(FishSet, GameObjectSet);
 
 FishSet.prototype.initialize = function(){
-    var tmpFish = new Fish(200, 200);
-    this.addToSet(tmpFish);
+    this._addFishes();
 };
 
+FishSet.prototype.addFishes= function(x){
+    for(var i=0; i<x; i++){
+        var tx = Math.random()*500 + 200;
+        var ty = Math.random()*300 + 100;
+        var tmpFish = new Fish(tx, ty, this.mCamera);
+        tmpFish.initialize();
+        this.addToSet(tmpFish);
+    }
+};
 
-FishSet.prototype.update = function(aCamera) {
+/*
+FishSet.prototype.initialize = function(){
+    var tmpFish = new Fish(300, 300);
+    this.addToSet(tmpFish);
+};
+*/
+
+
+FishSet.prototype.update = function() {
+    /*
     var x, y, d;
     if (gEngine.Input.isButtonClicked(gEngine.Input.mouseButton.Left)) {
         x = aCamera.mouseWCX();
@@ -39,5 +57,7 @@ FishSet.prototype.update = function(aCamera) {
         }
     }
     
+    */
     GameObjectSet.prototype.update.call(this);
+
 };

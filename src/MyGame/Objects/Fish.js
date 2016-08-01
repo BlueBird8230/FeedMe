@@ -15,14 +15,20 @@ Fish.eFishState = Object.freeze({
     sWait: 2
 });
 
-function Fish(x, y) {
+function Fish(x, y, aCamera) {
     // The camera to view the scene
     this.mSpeed = 2;
+    this.mCamera = aCamera;
 
 
 
     this.mFish = new Renderable();
-    GameObject.call(this, this.mFish);
+    this.mFishRadius = 20;
+    this.mFish.setColor([1.0, 0.0, 0.0, 0.6]);
+    this.mFishObj = new GameObject(this.mFish);
+    GameObject.call(this, this.mFishObj);
+
+    this.mShowBounds = false;
 
     this.mCurrentState = null;
     this.mTargetPosition = null;
@@ -40,11 +46,13 @@ function Fish(x, y) {
 gEngine.Core.inheritPrototype(Fish, GameObject);
 
 Fish.prototype.initialize = function(){
-    this.mFish.setColor([1.0, 0.0, 0.0, 0.6]);
-    this.mFish.getXform().setSize(20, 20);
-    this.mFish.getXform().setPosition(this.xPos, this.yPos);
+    this.mFishObj.getXform().setSize(this.mFishRadius, this.mFishRadius);
+    this.mFishObj.getXform().setPosition(this.xPos, this.yPos);
 
-    //this.mCurrentState = Fish.eFishState.sPatrol;
+    var r = new RigidRectangle(this.mFishObj.getXform(), 20, 20);
+    r.setColor([0, 1, 0, 1]);
+    r.setDrawBounds(this.mShowBounds);
+    this.mFishObj.setPhysicsComponent(r);
 
 };
 
@@ -62,10 +70,8 @@ Fish.prototype._patrol = function(){
    vec2.subtract(toTarget, this.mTargetPosition, this.getXform().getPosition());
    var d = vec2.length(toTarget);
 
-   if(d>100){
+   if(d>300){
        this.rotateObjPointTo(this.mTargetPosition, 0.05); // rotate rather quickly
-       //this.getXform().incXPosBy(toTarget[0]*0.01);
-       //this.getXform().incYPosBy(toTarget[1]*0.01);
     }
     else{
         this._computeNextState();
@@ -74,11 +80,28 @@ Fish.prototype._patrol = function(){
 };
 
 Fish.prototype._computeNextState = function(){
+
     this.mTargetPosition = this._getRandomPosition();
     //this._computeSpeed();
-    this.setSpeed( (0.7+0.6*Math.random()) * 2);
+    this.setSpeed( (0.1+0.6*Math.random()) * 2);
 };
 
 Fish.prototype.update = function(){
+    if (gEngine.Input.isButtonClicked(gEngine.Input.mouseButton.Left)) {
+        var x = this.mCamera.mouseWCX();
+        var y = this.mCamera.mouseWCY();
+        var pos = vec2.fromValues(x, y);
+        //if(this.mFishObj.getPhysicsComponent())
+
+        var sub = [];
+        vec2.subtract(sub, pos, this.mFishObj.getXform().getPosition());
+        var d = vec2.length(sub);
+        if(d < this.mFishRadius){
+            this.mFishObj.getXform().setSize(50, 50);
+        }
+
+    }
+
     this._patrol();
+    //gEngine.Physics.processObjObj(this.mPlatformObject, this.mMinionObject);
 };

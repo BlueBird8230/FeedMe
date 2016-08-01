@@ -35,22 +35,23 @@ MainLevel.prototype.initialize = function () {
 
     this.mCamera.setBackgroundColor([0.8, 0.8, 0.8, 1]);
 
-    //this.mFishSet = new FishSet();
-    //this.mFishSet.initialize();
+    this.mFishSet = new FishSet(this.mCamera);
+//    this.mFishSet.initialize(6);
+    this.mFishSet.addFishes(4);
 
-    this.testFish = new Fish(200, 200);
-    this.testFish.initialize();
+    //this.mFishSet.addToSet(this.testFish);
 };
 
 MainLevel.prototype.draw = function () {
     gEngine.Core.clearCanvas([0.9, 0.9, 0.9, 1]);
     this.mCamera.setupViewProjection();
 
-    this.testFish.draw(this.mCamera);
-    //this.mFishSet.draw(this.mCamera);
+   // this.testFish.draw(this.mCamera);
+
+    this.mFishSet.draw(this.mCamera);
 };
 
 MainLevel.prototype.update = function () {
-    this.testFish.update();
-    //this.mFishSet.update(this.mCamera);
+    //this.testFish.update();
+    this.mFishSet.update(this.mCamera);
 };
