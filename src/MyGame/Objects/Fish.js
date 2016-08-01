@@ -1,18 +1,10 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-/*
-var gCanvasWidth = 960;
-var gCanvasHeight = 540;
-var gWorldWidth = 960;
-var gWorldHeight = 540;
-var gViewWidth = 640;
-var gViewHeight = 360;
-*/
 Fish.eFishState = Object.freeze({
     sPatrol: 0,
-    sEndPatrol: 1,
-    sWait: 2
+    sWait: 1,
+    sAngry: 2
 });
 
 function Fish(x, y, aCamera) {
@@ -37,10 +29,17 @@ function Fish(x, y, aCamera) {
     this.yPos = y;
 
     this.mIsHungry = true;
+    this.mIsClicked = false;
+    this.mIsAngry = false;
+
     this.mIsWaitingForFood = false;
     this.mIsPatrolStraight = false;
 
-    this._computeNextState();
+    // timer
+    this.timerAngryGap = 10;
+    this.timerAngry = null;
+
+   // this._computeNextState();
 
 }
 gEngine.Core.inheritPrototype(Fish, GameObject);
@@ -48,13 +47,24 @@ gEngine.Core.inheritPrototype(Fish, GameObject);
 Fish.prototype.initialize = function(){
     this.mFishObj.getXform().setSize(this.mFishRadius, this.mFishRadius);
     this.mFishObj.getXform().setPosition(this.xPos, this.yPos);
+    
+    // initialize the mTargetPosition and set speed;
+    this.mTargetPosition = this._getRandomPosition();
+    this.setSpeed( (0.8+0.6*Math.random()) * 2);
+
+    // initialize the current state;
+    this.mCurrentState = Fish.eFishState.sPatrol;
 
     var r = new RigidRectangle(this.mFishObj.getXform(), 20, 20);
     r.setColor([0, 1, 0, 1]);
     r.setDrawBounds(this.mShowBounds);
     this.mFishObj.setPhysicsComponent(r);
 
+    // initilize the timer
+    this.timerAngry = this.timerAngryGap;
+
 };
+
 
 Fish.prototype._getRandomPosition = function(){
     var tmpX = Math.random()*gWorldWidth;
@@ -70,7 +80,7 @@ Fish.prototype._patrol = function(){
    vec2.subtract(toTarget, this.mTargetPosition, this.getXform().getPosition());
    var d = vec2.length(toTarget);
 
-   if(d>300){
+   if(d>200){
        this.rotateObjPointTo(this.mTargetPosition, 0.05); // rotate rather quickly
     }
     else{
@@ -79,11 +89,53 @@ Fish.prototype._patrol = function(){
 
 };
 
-Fish.prototype._computeNextState = function(){
+Fish.prototype._computeNextState = function(){                      // Only when the food is gone, can set 
+                                                                    // this fish not hungry;
+    switch(this.mCurrentState){
+        case 0: // Patrolling
+            if(this.mIsClicked){
+                if(this.mIsHungry)
+                    this.mCurrentState = Fish.eFishState.sWait;
+                if(!this.mIsHungry){
+                    this.mIsAngry = true;
+                    this.mCurrentState = Fish.eFishState.sAngry;
+                }
+            }
+            this.mIsClicked = false;
+            break;
+        case 1: // Waiting
+            if(!this.mIsHungry)                                     // Hungry
+                this.mCurrentState = Fish.eFishState.sPatrol;
+            break;
+        case 2: // Angry
+            if(!this.mIsAngry){
+                
+                this.mCurrentState = Fish.eFishState.sPatrol;
+            }
+            break;
+    }
 
-    this.mTargetPosition = this._getRandomPosition();
-    //this._computeSpeed();
-    this.setSpeed( (0.1+0.6*Math.random()) * 2);
+};
+
+Fish.prototype._wait = function(){
+
+};
+
+Fish.prototype._angry = function(){
+    if(this.timerAngry == this.timerAngryGap){
+        this.mFishObj.getXform().setSize(80, 80);
+    }
+    this.rotateObjPointTo(this.mTargetPosition, 0.05); // rotate rather quickly
+    
+    this.timerAngry -= 1;
+    if(this.timerAngry <= 0){
+        this.timerAngry = this.timerAngryGap;
+        this.mCurrentState = Fish.eFishState.sPatrol;
+        this.mIsAngry = false;
+
+        this.mFishObj.getXform().setSize(this.mFishRadius, this.mFishRadius);
+        this._computeNextState();
+    }
 };
 
 Fish.prototype.update = function(){
@@ -97,11 +149,24 @@ Fish.prototype.update = function(){
         vec2.subtract(sub, pos, this.mFishObj.getXform().getPosition());
         var d = vec2.length(sub);
         if(d < this.mFishRadius){
-            this.mFishObj.getXform().setSize(50, 50);
+            //this.mFishObj.getXform().setSize(50, 50);
+            this.mIsClicked = true;
         }
 
     }
+    this._computeNextState();
 
-    this._patrol();
+    switch(this.mCurrentState){
+        case 0:
+            this._patrol();
+            break;
+        case 1:
+            this._wait();
+            break;
+        case 2:
+            this._angry();
+            break;
+    }
+
     //gEngine.Physics.processObjObj(this.mPlatformObject, this.mMinionObject);
 };
