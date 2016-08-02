@@ -13,6 +13,7 @@ var gViewWidth = 640;
 var gViewHeight = 360;
 
 var gCanFeed = true;
+var gCanShoot = false;
 
 function MyGame() {
     this.kMinionSprite = "assets/minion_sprite.png";

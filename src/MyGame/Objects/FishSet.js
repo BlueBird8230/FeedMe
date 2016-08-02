@@ -7,8 +7,9 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-function FishSet(aCamera) {
+function FishSet(aCamera, aTexture) {
     this.mCamera = aCamera;
+    this.mTexture = aTexture;
     GameObjectSet.call(this);
     //this.kSpriteSheet = sprite;
 }
@@ -22,13 +23,15 @@ FishSet.prototype.addFishes= function(x){
     for(var i=0; i<x; i++){
         var tx = Math.random()*500 + 200;
         var ty = Math.random()*300 + 100;
-        var tmpFish = new Fish(tx, ty, this.mCamera);
+        var tmpFish = new Fish(tx, ty, this.mCamera, this.mTexture);
         tmpFish.initialize();
         this.addToSet(tmpFish);
     }
 };
 
+/*
 FishSet.prototype.update = function() {
     GameObjectSet.prototype.update.call(this);
 
 };
+*/
