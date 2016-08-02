@@ -70,11 +70,10 @@ Fish.prototype.initialize = function(){
 
 
 Fish.prototype._getRandomPosition = function(){
-    var tmpX = Math.random()*gWorldWidth;
-    var tmpY = Math.random()*gWorldHeight;
+    var tmpX = 10 + Math.random()*(gWorldWidth-10);
+    var tmpY = 10 + Math.random()*(gWorldHeight-10);
 
     this.setSpeed( (this.mSpeed+0.6*Math.random()) * 2);
-
     return vec2.fromValues(tmpX, tmpY);
 };
 
@@ -82,11 +81,12 @@ Fish.prototype._patrol = function(){
 
    // Continue patrolling!
    GameObject.prototype.update.call(this);
+1
    var toTarget = [];
    vec2.subtract(toTarget, this.mTargetPosition, this.getXform().getPosition());
    var d = vec2.length(toTarget);
 
-   if(d>150){
+   if(d>15){
        this.rotateObjPointTo(this.mTargetPosition, 0.05); // rotate rather quickly
     }
     else{
@@ -116,12 +116,14 @@ Fish.prototype._computeNextState = function(){                      // Only when
             this.mIsClicked = false;
             break;
         case 1: // Waiting
-            if(!this.mIsHungry)                                     // Hungry
+            if(!this.mIsHungry){                                     // Hungry
+                //this.mIsClicked = false;
                 this.mCurrentState = Fish.eFishState.sPatrol;
+            }
             break;
         case 2: // Angry
             if(!this.mIsAngry){
-                
+                //this.mIsClicked = false;
                 this.mCurrentState = Fish.eFishState.sPatrol;
             }
             break;
