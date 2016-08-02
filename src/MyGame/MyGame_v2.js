@@ -1,8 +1,3 @@
-/*
- * File: MyGame.js 
- * This is the logic of our game. 
- */
-
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
 var gCanvasWidth = 960;
@@ -16,19 +11,20 @@ var gCanFeed = true;
 var gCanShoot = false;
 
 function MyGame() {
-    // The camera to view the scene
-    this.mCamera = null;
-
+    
     this.kFontFile =  "assets/fonts/Consolas-72";
     this.mFontRenderable = null;
+    
+    this.mCamera = null;
+    
     this.ifQuit = false;
     
 }
+
 gEngine.Core.inheritPrototype(MyGame, Scene);
 
 MyGame.prototype.loadScene = function () {
-    gEngine.Fonts.loadFont(this.kFontFile);
-    //gEngine.Fonts.loadFont(this.kFontFile);
+     gEngine.Fonts.loadFont(this.kFontFile);
 };
 
 MyGame.prototype.unloadScene = function () {
@@ -44,6 +40,7 @@ MyGame.prototype.unloadScene = function () {
 };
 
 MyGame.prototype.initialize = function () {
+    
     this.mCamera = new Camera(
         vec2.fromValues(0.5*gWorldWidth, 0.5*gWorldHeight),
         gWorldWidth,
@@ -59,13 +56,16 @@ MyGame.prototype.initialize = function () {
 };
 
 MyGame.prototype.draw = function () {
-
+    
     gEngine.Core.clearCanvas([0.9, 0.9, 0.9, 1]);
     this.mCamera.setupViewProjection();
+    
     this.mFontRenderable.draw(this.mCamera);
+ 
 };
 
 MyGame.prototype.update = function () {
+    
      if (gEngine.Input.isKeyClicked(gEngine.Input.keys.P)){
          gEngine.GameLoop.stop();
      }

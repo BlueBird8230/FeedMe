@@ -8,6 +8,8 @@
 
 function MainLevel() {
     this.mCamera = null;
+    this.mCamera2 = null;   // Camera for the minimap
+    this.mScoreBoard = null;
 
     this.mCamPos = null;
     this.kFontCon72 = "assets/fonts/Consolas-72";
@@ -42,9 +44,20 @@ MainLevel.prototype.unloadScene = function () {
     gEngine.Textures.unloadTexture(this.mFishTexture);
     gEngine.Textures.unloadTexture(this.mFoodTexture);
     gEngine.Fonts.unloadFont(this.kFontCon72);
+
+    var nextLevel = new GameOver();
+    gEngine.Core.startScene(nextLevel);
 };
 
 MainLevel.prototype.initialize = function () {
+
+    // small camera initialize
+    this.mCamera2 = new Camera(
+        vec2.fromValues(0.5*gWorldWidth, 0.5*gWorldHeight),
+        gWorldWidth,
+        [0.5*gViewWidth-128, 0, 256, 160]
+        );
+    this.mCamera2.setBackgroundColor([0.8, 0.8, 0.8, 1]);
 
     this.mCamera = new Camera(
         vec2.fromValues(0.5*gWorldWidth, 0.5*gWorldHeight),
@@ -74,39 +87,30 @@ MainLevel.prototype.initialize = function () {
     this.mFg.initialize([128, 256], [0.5*gWorldWidth, 0.5*gWorldHeight]);
 
     // initialize the scoreboard.
-    //this.mScoreBoard = new ScoreBoard(this.kFontCon72);
-    //this.mScoreBoard.initialize();
+    this.mScoreBoard = new ScoreBoard(this.kFontCon72);
+    this.mScoreBoard.initialize();
 };
 
 MainLevel.prototype.draw = function () {
 
-
-
     gEngine.Core.clearCanvas([0.9, 0.9, 0.9, 0]);
-    //this.mScoreBoard.draw();
 
+    // setup big camera
     this.mCamera.setupViewProjection();
-
-    // Scoreboard.
-
-   // this.testFish.draw(this.mCamera);
-
     this.mBg.draw(this.mCamera);
     this.mFishSet.draw(this.mCamera);
     this.mPlayer.draw();
     this.mFg.draw(this.mCamera);
 
     // set up the small camera
-    var smallViewPortCamera = this.mSmallViewPort.getCamera();
-    smallViewPortCamera.setupViewProjection();
-    
-
-    //draw in the small camera
+    this.mCamera2.setupViewProjection();
     var bigCameraBBox = this.mPlayer.getCameraBBox();
-    bigCameraBBox.draw(smallViewPortCamera);
-    this.mBg.draw(smallViewPortCamera);
-    this.mFishSet.draw(smallViewPortCamera); 
-    this.mFg.draw(smallViewPortCamera);
+    bigCameraBBox.draw(this.mCamera2);
+    this.mBg.draw(this.mCamera2);
+    this.mFishSet.draw(this.mCamera2); 
+    this.mFg.draw(this.mCamera2);
+
+    this.mScoreBoard.draw();
 
 };
 
@@ -114,4 +118,9 @@ MainLevel.prototype.update = function () {
     //this.testFish.update();
     this.mFishSet.update();
     this.mPlayer.update();
+    this.mScoreBoard.update();
+    
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Q)){
+         gEngine.GameLoop.stop();
+     }
 };

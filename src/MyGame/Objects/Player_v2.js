@@ -3,19 +3,32 @@
 function Player(myCamera) {
     
     this.mCamera = myCamera;
-    this.mCameraBBox = null;
-    
-    
     this.mFood = null;
+
+    this.mCameraBBox = null;
+
     this.mFoodPos = null;
+    
+    this.timerFeedGap = 400;
+    this.timerFeed = this.timerFeedGap;
+
+    // some flages
     this.shootFood = false;
+
+    // boundaries.
+    this.leftWorldBound = 0.5*gViewWidth;
+    this.rightWorldBound = gWorldWidth - 0.5*gViewWidth;
+    this.upWorldBound = gWorldHeight - 0.5*gViewHeight;
+    this.downWorldBound = 0.5*gViewHeight;
 }
 
 Player.prototype._initializeFood = function(){
     var mRenderable = new Renderable();
-    mRenderable.setColor([0, 1, 0, 1]);
+    mRenderable.setColor([0, 5, 2, 1]);
+
     this.mFood = new GameObject(mRenderable);
     this.mFood.getXform().setSize(20, 20);
+    //this.mFood.getXform().setPosition(0.5*gWorldWidth, 0.5*gWorldHeight-0.5*(gCameraWidth*9)/16+10);
     this._updateFood(); 
 };
 
@@ -59,8 +72,8 @@ Player.prototype.update = function() {
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.W)){
         var currentCenter = this.mCamera.getWCCenter();
         currentCenter[1] = currentCenter[1] + delta;
-        if (currentCenter[1]>gWorldHeight)
-            currentCenter[1] = gWorldHeight;
+        if (currentCenter[1]>this.upWorldBound)
+            currentCenter[1] = this.upWorldBound;
         this.mCamera.setWCCenter(currentCenter);
         this._updateFood();
         this._updateCameraBBox();
@@ -69,8 +82,8 @@ Player.prototype.update = function() {
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.S)){
         var currentCenter = this.mCamera.getWCCenter();
         currentCenter[1] = currentCenter[1] - delta;
-        if (currentCenter[1]<0)
-            currentCenter[1] = 0;
+        if (currentCenter[1]<this.downWorldBound)
+            currentCenter[1] = this.downWorldBound;
         this.mCamera.setWCCenter(currentCenter); 
         this._updateFood();
         this._updateCameraBBox();
@@ -79,8 +92,8 @@ Player.prototype.update = function() {
      if (gEngine.Input.isKeyPressed(gEngine.Input.keys.A)){
         var currentCenter = this.mCamera.getWCCenter();
         currentCenter[0] = currentCenter[0] - delta;
-        if (currentCenter[0]<0)
-            currentCenter[0] = 0;
+        if (currentCenter[0]<this.leftWorldBound)
+            currentCenter[0] = this.leftWorldBound;
         this.mCamera.setWCCenter(currentCenter);
         this._updateFood();
         this._updateCameraBBox();
@@ -89,8 +102,8 @@ Player.prototype.update = function() {
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.D)){
         var currentCenter = this.mCamera.getWCCenter();
         currentCenter[0] = currentCenter[0] + delta;
-        if (currentCenter[0]>gWorldWidth)
-            currentCenter[0] = gWorldWidth;
+        if (currentCenter[0]>this.rightWorldBound)
+            currentCenter[0] = this.rightWorldBound;
         this.mCamera.setWCCenter(currentCenter);
         this._updateFood();
         this._updateCameraBBox();
@@ -101,22 +114,39 @@ Player.prototype.update = function() {
         this._initializeFood();
     }
     
+    this._feed();
     
-    if (gEngine.Input.isButtonClicked(gEngine.Input.mouseButton.Left)){
+};
+
+Player.prototype._startTimer = function(){
+    this.timerFeed -= 1;
+    if(this.timerFeed <= 0){
+        this.timerFeed = this.timerFeedGap;
+        gCanFeed = true;
+        gCanShoot = false;
+    }
+};
+Player.prototype._feed = function(){
+    if (gEngine.Input.isButtonClicked(gEngine.Input.mouseButton.Left) && gCanFeed && gCanShoot){
         this.mFood.getXform().setSize(15, 15);
         var mouseXPos = this.mCamera.mouseWCX();
         var mouseYPos = this.mCamera.mouseWCY();
         this.mFoodPos = vec2.fromValues(mouseXPos, mouseYPos);
-        this.shootFood = true;
-        this.mFood.mRenderComponent.setColor([1, 0, 0, 1]);
+
+        this.shootFood = true;// to move the food
+        gCanFeed = false;
+
+        this.mFood.mRenderComponent.setColor([0, 0, 200, 1]);
     }    
-    
-    if(this.shootFood) 
-        this.shootFoodTowards(this.mFoodPos);
-        
+    if(!this.canFeed){
+        this._startTimer();
+    }
+    if(this.shootFood){
+        this._shootFoodTowards(this.mFoodPos);
+    }
 };
 
-Player.prototype.shootFoodTowards = function(pos){
+Player.prototype._shootFoodTowards = function(pos){
     
     var sub = [];
     vec2.subtract(sub, pos, this.mFood.getXform().getPosition());
@@ -132,14 +162,10 @@ Player.prototype.shootFoodTowards = function(pos){
     }
 };
 
-Player.prototype.draw = function(){
-    
-    this.mFood.draw(this.mCamera);
-    
+Player.prototype.draw = function(myCamera){
+    this.mFood.draw(myCamera);
 };
 
 Player.prototype.getCameraBBox = function(){
     return this.mCameraBBox;
 };
-
-
