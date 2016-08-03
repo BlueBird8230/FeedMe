@@ -93,7 +93,7 @@ Fish.prototype._patrol = function(){
         vec2.subtract(toTarget, this.mTargetPosition, this.getXform().getPosition());
         var d = vec2.length(toTarget);
 
-        if(d>100){
+        if(d>80){
             this.rotateObjPointTo(this.mTargetPosition, 0.05); // rotate rather quickly
         }
         else{
@@ -114,6 +114,7 @@ Fish.prototype._wait = function(){
         this.testTimer = 200;
         this.mIsHungry = false;
         this.mCurrentState = Fish.eFishState.sPatrol;
+        gGetScore = true;
     }
 };
 

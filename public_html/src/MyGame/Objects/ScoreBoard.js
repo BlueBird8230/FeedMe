@@ -34,15 +34,19 @@ ScoreBoard.prototype.draw = function(){
 };
 
 ScoreBoard.prototype.update = function() { 
+    if(gGetScore){
+        this.changeScore(1);
+        gGetScore = false;
+    }
     this.mFontRenderable.setText('current score: '+this.mScore);    
 };
 
-ScoreBoard.prototype.addScore = function(num){
+ScoreBoard.prototype.changeScore = function(num){
     this.mScore += num;
 };
 
-ScoreBoard.prototype.loseScore = function(num){
-    this.mScore -= num;
+ScoreBoard.prototype.getScore = function(){
+    return this.mScore;
 };
 
 ScoreBoard.prototype._initText = function (font, posX, posY, color, textH) {
