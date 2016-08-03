@@ -11,19 +11,24 @@ function GameOver() {
     this.mFontRenderable = null;
     
     this.mCamera = null;
+    this.kEndMusic = "assets/end.mp3";
     
 }
 gEngine.Core.inheritPrototype(GameOver, Scene);
 
 GameOver.prototype.loadScene = function () {
     gEngine.Fonts.loadFont(this.kFontFile);
+    gEngine.AudioClips.loadAudio(this.kEndMusic);
 };
 
 GameOver.prototype.unloadScene = function () {
+    gEngine.AudioClips.unloadAudio(this.kEndMusic);
 
 };
 
 GameOver.prototype.initialize = function () {
+    
+    gEngine.AudioClips.playBackgroundAudio(this.kEndMusic);
     
     this.mCamera = new Camera(
         vec2.fromValues(0.5*gWorldWidth, 0.5*gWorldHeight),

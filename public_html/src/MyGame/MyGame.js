@@ -17,6 +17,7 @@ var gCanShoot = false;
 
 var gGetScore = false;
 var gGameOver = false;
+var gAngry = false;
 
 function MyGame() {
     // The camera to view the scene
@@ -37,7 +38,7 @@ MyGame.prototype.loadScene = function () {
 MyGame.prototype.unloadScene = function () {
     gEngine.Fonts.unloadFont(this.kFontFile);
     if (this.ifQuit==false){
-        var nextLevel = new MainLevel(3);
+        var nextLevel = new MainLevel(3, 0, true);
         gEngine.Core.startScene(nextLevel);
     }
     else{

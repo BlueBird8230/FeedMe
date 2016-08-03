@@ -1,6 +1,6 @@
 "use strict";
 
-function Player(myCamera, foodTexture, aLevel, aFontFile) {
+function Player(myCamera, foodTexture, aLevel, aFontFile, iniScore, aChance) {
     
     this.mCamera = myCamera;
     this.mFood = null;
@@ -18,8 +18,13 @@ function Player(myCamera, foodTexture, aLevel, aFontFile) {
 
     this.mFontFile = aFontFile;
     this.mScoreBoard = null;
+    this.mInitScore = iniScore;
+    this.mLastScore = iniScore;
+
+    this.mChance = aChance;
 
     this.mNumFoodLeft = aLevel;
+
     this.mCurrentLevel = aLevel;
 
     this.numLevelUp = -1;
@@ -35,7 +40,13 @@ function Player(myCamera, foodTexture, aLevel, aFontFile) {
 Player.prototype._initializeFood = function(){
     var mRenderable = new LightRenderable(this.mFoodTexture);
     //mRenderable.setColor([0, 5, 2, 1]);
-
+    
+    /*
+    if(this.mCurrentLevel === 3){
+        this.mLastLevel = 0;
+    }   else{
+        this.mLastLevel = this.mCurrentLevel-1;
+    }*/
     this.mFood = new GameObject(mRenderable);
     this.mFood.getXform().setSize(20, 20);
     //this.mFood.getXform().setPosition(0.5*gWorldWidth, 0.5*gWorldHeight-0.5*(gCameraWidth*9)/16+10);
@@ -58,7 +69,8 @@ Player.prototype.initialize = function(){
     this._initializeCameraBBox();
     this._initializeFood();
 
-    this.mScoreBoard = new ScoreBoard(this.mFontFile);
+    this.mScoreBoard = new ScoreBoard(this.mFontFile, this.mInitScore, this.mCurrentLevel,
+            this.mChance);
     this.mScoreBoard.initialize();
    
 };
@@ -131,11 +143,17 @@ Player.prototype.update = function() {
     
     this.mScoreBoard.update();
 
+    if(gAngry){
+        gAngry = false;
+        this.mNumFoodLeft -= 1;
+    }
+
     if(this.mNumFoodLeft == 0){
-        var score = this.mScoreBoard.getScore() + 1;
-        if(score === this.mCurrentLevel){
+        var score = this.mScoreBoard.getScore();
+        this.mInitScore = score;
+        if((score-this.mLastScore) === this.mCurrentLevel){
             this.numLevelUp = 1;
-        }   else if(score === this.mCurrentLevel-1){
+        }   else if(((score-this.mLastScore)===this.mCurrentLevel-1) && this.mChance){
             this.numLevelUp = 0;
         }   else{
             this.isGameOver = true;
@@ -204,4 +222,8 @@ Player.prototype.LevelUp = function(){
 
 Player.prototype.GameOver = function(){
     return this.isGameOver;
+};
+
+Player.prototype.getCurrentScore = function(){
+    return this.mInitScore;
 };

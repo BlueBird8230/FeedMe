@@ -7,14 +7,19 @@ Fish.eFishState = Object.freeze({
     sAngry: 2
 });
 
-function Fish(x, y, aCamera, aTexture) {
+function Fish(x, y, aCamera, aTexture, myLightArray, aCueRight, aCueLeft) {
     // The camera to view the scene
     //this.mSpeed = 0.1;   // 0.8 is properly.
     this.mCamera = aCamera;
-
-
+    this.mLightArray = myLightArray;
+    this.kScore = aCueRight;
+    this.kWrong = aCueLeft;
 
     this.mFish = new LightRenderable(aTexture);
+    for (var i = 0; i < this.mLightArray.length; i++){
+        this.mFish.addLight(this.mLightArray[i]);
+    };
+
     this.mFishRadius = 30;
     //this.mFish.setColor([256, 0.0, 0.0, 1]);
     this.mFishObj = new GameObject(this.mFish);
@@ -40,10 +45,9 @@ function Fish(x, y, aCamera, aTexture) {
     // timer
     this.timerAngryGap = 10;
     this.timerAngry = null;
-    this.testTimer = 50;
+    this.waitTimerGap = 50;
+    this.testTimer = this.waitTimerGap;
 
-    // Smooth flag
-    this.mForSmooth = false;
 
    // this._computeNextState();
 
@@ -69,6 +73,10 @@ Fish.prototype.initialize = function(){
 
     // initilize the timer
     this.timerAngry = this.timerAngryGap;
+
+    for (var i = 0; i < this.mLightArray.length; i++){
+        this.mFish.addLight(this.mLightArray[i]);
+    };
 
 };
 
@@ -109,21 +117,24 @@ Fish.prototype._patrol = function(){
 };
 
 Fish.prototype._wait = function(){
+    if(this.testTimer === this.waitTimerGap)
+        gEngine.AudioClips.playACue(this.kScore);
     this.testTimer -= 1;
     if(this.testTimer <= 0){
-        this.testTimer = 200;
+        this.testTimer = this.waitTimerGap;
         this.mIsHungry = false;
         this.mCurrentState = Fish.eFishState.sPatrol;
-        gGetScore = true;
     }
 };
 
 Fish.prototype._angry = function(){
     if(this.timerAngry == this.timerAngryGap){
         this.mFishObj.getXform().setSize(2*this.mFishRadius, 4*this.mFishRadius);
+        gEngine.AudioClips.playACue(this.kWrong);
         var c = this.mFishObj.getRenderable().getColor();
         c[0] = 1;
         c[3] = 0.5;
+        gAngry = true;
     }
     this.rotateObjPointTo(this.mTargetPosition, 0.05); // rotate rather quickly
     
@@ -154,8 +165,10 @@ Fish.prototype.update = function(){
         var d = vec2.length(sub);
         if(d < this.mFishRadius){
             //this.mFishObj.getXform().setSize(50, 50);
-            if(this.mIsHungry)
+            if(this.mIsHungry){
+                gGetScore = true;
                 gCanShoot = true;
+            }
             this.mIsClicked = true;
         }
 

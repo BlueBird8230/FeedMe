@@ -1,12 +1,18 @@
 "use strict";
 
-function ScoreBoard(myFontFile){
+function ScoreBoard(myFontFile, iniScore, cLevel, chance){
     
-    this.mScore = 0;
+    this.mScore = iniScore;
     this.mCamera = null;
+    this.mChance = chance;
+
+    this.mCurrentLevel = cLevel;
     
     this.mFontFile = myFontFile;
     this.mFontRenderable = null;
+    this.mFontRenderableLevel = null;
+    this.mFontRenderableTip = null;
+    this.mFontRenderableTip2 = null;
     this.mString = null;
     
     
@@ -24,13 +30,34 @@ ScoreBoard.prototype.initialize = function(){
     this.mString = 'current score: '+ this.mScore;
     this.mFontRenderable = new FontRenderable(this.mString);
     this.mFontRenderable.setFont(this.mFontFile);
-    this._initText(this.mFontRenderable, 8, 16, [120, 0, 0, 1], 4);
+    this._initText(this.mFontRenderable, 8, 24, [120, 0, 0, 1], 4);
+
+    this.mString = 'current level: '+ this.mCurrentLevel;
+    this.mFontRenderableLevel = new FontRenderable(this.mString);
+    this.mFontRenderableLevel.setFont(this.mFontFile);
+    this._initText(this.mFontRenderableLevel, 8, 28, [120, 0, 0, 1], 4);
       
+    this.mString = String(this.mCurrentLevel)+" fishes to pass.";
+    this.mFontRenderableTip = new FontRenderable(this.mString);
+    this.mFontRenderableTip.setFont(this.mFontFile);
+    this._initText(this.mFontRenderableTip, 8, 20, [120, 0, 0, 1], 4);
+
+    if(this.mChance){
+        this.mString = String(this.mCurrentLevel-1)+" fishes to stay.";
+    }   else{
+        this.mString = "You can't stay.";
+    }
+    this.mFontRenderableTip2 = new FontRenderable(this.mString);
+    this.mFontRenderableTip2.setFont(this.mFontFile);
+    this._initText(this.mFontRenderableTip2, 8, 16, [120, 0, 0, 1], 4);
 };
 
 ScoreBoard.prototype.draw = function(){
     this.mCamera.setupViewProjection();
     this.mFontRenderable.draw(this.mCamera);
+    this.mFontRenderableLevel.draw(this.mCamera);
+    this.mFontRenderableTip.draw(this.mCamera);
+    this.mFontRenderableTip2.draw(this.mCamera);
 };
 
 ScoreBoard.prototype.update = function() { 
@@ -39,6 +66,7 @@ ScoreBoard.prototype.update = function() {
         gGetScore = false;
     }
     this.mFontRenderable.setText('current score: '+this.mScore);    
+    this.mFontRenderableLevel.setText('current level: '+this.mCurrentLevel);    
 };
 
 ScoreBoard.prototype.changeScore = function(num){
