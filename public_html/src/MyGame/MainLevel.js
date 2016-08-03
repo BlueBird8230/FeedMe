@@ -6,7 +6,7 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-function MainLevel(level) {
+function MainLevel() {
     this.mCamera = null;
     this.mCamera2 = null;   // Camera for the minimap
     this.mScoreBoard = null;
@@ -17,20 +17,17 @@ function MainLevel(level) {
     this.mFgTexture = "assets/FeedMe_bg_up.png";
     this.mFishTexture = "assets/Fish.png";
     this.mFoodTexture = "assets/Food.png";
-
-
+    
+    
+    this.mLightFishSet = null;
     this.mFishSet = null;
     this.mPlayer = null;
-    this.mSmallViewPort = null;
-    //this.mScoreBoard = null;
+    this.mScoreBoard = null;
     this.mBg = null;
     this.mFg = null;
-
-    this.mLevel = level;
-    this.nextLevelNum = 0;
-
-    this.mLevelUp = null;
-    this.mGameOver = null;
+    
+    this.mLight = null;
+    this.mLightArray = null;;
 
 }
 gEngine.Core.inheritPrototype(MainLevel, Scene);
@@ -44,29 +41,35 @@ MainLevel.prototype.loadScene = function () {
 };
 
 MainLevel.prototype.unloadScene = function () {
-    //gEngine.LayerManager.cleanUp();
     gEngine.Textures.unloadTexture(this.mBgTexture);
     gEngine.Textures.unloadTexture(this.mFgTexture);
     gEngine.Textures.unloadTexture(this.mFishTexture);
     gEngine.Textures.unloadTexture(this.mFoodTexture);
     gEngine.Fonts.unloadFont(this.kFontCon72);
 
-    if(this.mGameOver){
-        var nextLevel = new GameOver();
-        gEngine.Core.startScene(nextLevel);
-    }   else {
-        var nextLevel = new MainLevel(this.mLevel+this.nextLevelNum);
-        gEngine.Core.startScene(nextLevel);
-    }
+    var nextLevel = new GameOver();
+    gEngine.Core.startScene(nextLevel);
+};
 
+MainLevel.prototype._initializeLight = function(){
+    gEngine.DefaultResources.setGlobalAmbientIntensity(1);
+    this.mLight = new Light();
+	this.mLight.setLightType(Light.eLightType.ePointLight);
+	this.mLight.setColor([1.0, 0, 0, 1]);
+	this.mLight.setXPos(55);
+	this.mLight.setYPos(61);
+	this.mLight.setZPos(-1);
+	this.mLight.setNear(400);
+	this.mLight.setFar(700);
+	this.mLight.setIntensity(10);
+    //this.mLightArray.push(this.mLight);
 };
 
 MainLevel.prototype.initialize = function () {
-
-    // 
-    this.mGameOver = false;
-    this.mLevelUp = false;
-
+    
+    
+    this._initializeLight();
+    
     // small camera initialize
     this.mCamera2 = new Camera(
         vec2.fromValues(0.5*gWorldWidth, 0.5*gWorldHeight),
@@ -82,29 +85,37 @@ MainLevel.prototype.initialize = function () {
         );
 
     this.mCamera.setBackgroundColor([0.8, 0.8, 0.8, 0]);
-
-    // initialize the mini map.
-    this.mSmallViewPort = new SmallViewPort();
-    this.mSmallViewPort.initialize();
-
+    
+    // initialize lightFish Set
+    this.mLightFishSet = new LightFishSet(this.mCamera, this.mFishTexture);
+    this.mLightFishSet.addFishes(2);
+    this.mLightArray = this.mLightFishSet.getLightSet();
+    
     // initialize the fish set.
-    this.mFishSet = new FishSet(this.mCamera, this.mFishTexture);
-    this.mFishSet.addFishes(this.mLevel);
+    this.mFishSet = new FishSet(this.mCamera, this.mFishTexture, this.mLightArray);
+    this.mFishSet.addFishes(7);
 
     // initialize the player.
-    this.mPlayer = new Player(this.mCamera, this.mFoodTexture, this.mLevel, this.kFontCon72);
+    this.mPlayer = new Player(this.mCamera, this.mFoodTexture);
     this.mPlayer.initialize();
 
     // initialize the background;
     this.mBg = new Background(this.mCamera, this.mBgTexture);
     this.mBg.initialize([gWorldWidth, gWorldHeight], [0.5*gWorldWidth, 0.5*gWorldHeight]);
+    for (var i = 0; i < this.mLightArray.length; i++){
+        this.mBg.getRenderable().addLight(this.mLightArray[i]);
+    }
 
     this.mFg = new Background(this.mCamera, this.mFgTexture);
     this.mFg.initialize([128, 256], [0.5*gWorldWidth, 0.5*gWorldHeight]);
+    for (var i = 0; i < this.mLightArray.length; i++){
+        this.mFg.getRenderable().addLight(this.mLightArray[i]);
+    }
+    
 
     // initialize the scoreboard.
-    //this.mScoreBoard = new ScoreBoard(this.kFontCon72);
-    //this.mScoreBoard.initialize();
+    this.mScoreBoard = new ScoreBoard(this.kFontCon72);
+    this.mScoreBoard.initialize();
 };
 
 MainLevel.prototype.draw = function () {
@@ -115,8 +126,9 @@ MainLevel.prototype.draw = function () {
     this.mCamera.setupViewProjection();
     this.mBg.draw(this.mCamera);
     this.mFishSet.draw(this.mCamera);
-    this.mFg.draw(this.mCamera);
     this.mPlayer.draw();
+    this.mFg.draw(this.mCamera);
+    this.mLightFishSet.draw(this.mCamera);
 
     // set up the small camera
     this.mCamera2.setupViewProjection();
@@ -125,8 +137,9 @@ MainLevel.prototype.draw = function () {
     this.mBg.draw(this.mCamera2);
     this.mFishSet.draw(this.mCamera2); 
     this.mFg.draw(this.mCamera2);
+    this.mLightFishSet.draw(this.mCamera2);
 
-    //this.mScoreBoard.draw();
+    this.mScoreBoard.draw();
 
 };
 
@@ -134,25 +147,10 @@ MainLevel.prototype.update = function () {
     //this.testFish.update();
     this.mFishSet.update();
     this.mPlayer.update();
-   // this.mScoreBoard.update();
+    this.mScoreBoard.update();
+    this.mLightFishSet.update();
     
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Q)){
-        this.mGameOver = true;
-        gEngine.GameLoop.stop();
-    }
-
-    var num = this.mPlayer.LevelUp();
-    if(num >= 0){
-        this.nextLevelNum = num;
-        gEngine.GameLoop.stop();
-        //this.unloadScene();
-    }
-    
-    if(this.mPlayer.GameOver()){
-        this.mGameOver = true;
-        gEngine.GameLoop.stop();
-        //this.unloadScene;
-    }
-    
-
+         gEngine.GameLoop.stop();
+     }
 };

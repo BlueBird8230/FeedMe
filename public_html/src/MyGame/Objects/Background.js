@@ -9,7 +9,7 @@ function Background(aCamera, aTexture){
 //    this.mWidth = size[0];
 //    this.mHeight = size[1];
 
-    this.mBg = new TextureRenderable(this.mTexture);
+    this.mBg = new LightRenderable(this.mTexture);
     this.mBgObj = new GameObject(this.mBg);
     //this.mFishObj = new GameObject(this.mFish);
     GameObject.call(this, this.mBgObj);
@@ -36,6 +36,10 @@ Background.prototype.setSize = function(x, y){
 
 Background.prototype.setPosition = function(x, y){
     this.mBgObj.getXform().setPosition(x, y);
+};
+
+Background.prototype.getRenderable = function(){
+    return this.mBg;
 };
 
 

@@ -7,16 +7,18 @@ Fish.eFishState = Object.freeze({
     sAngry: 2
 });
 
-function Fish(x, y, aCamera, aTexture) {
+function Fish(x, y, aCamera, aTexture, myLightArray) {
     // The camera to view the scene
     //this.mSpeed = 0.1;   // 0.8 is properly.
     this.mCamera = aCamera;
-
-
+    this.mLightArray = myLightArray;
 
     this.mFish = new LightRenderable(aTexture);
+    for (var i = 0; i < this.mLightArray.length; i++){
+        this.mFish.addLight(this.mLightArray[i]);
+    };
+    
     this.mFishRadius = 30;
-    //this.mFish.setColor([256, 0.0, 0.0, 1]);
     this.mFishObj = new GameObject(this.mFish);
     GameObject.call(this, this.mFishObj);
 
@@ -45,9 +47,8 @@ function Fish(x, y, aCamera, aTexture) {
     // Smooth flag
     this.mForSmooth = false;
 
-   // this._computeNextState();
-
 }
+
 gEngine.Core.inheritPrototype(Fish, GameObject);
 
 Fish.prototype.initialize = function(){
@@ -60,15 +61,14 @@ Fish.prototype.initialize = function(){
     // initialize the current state;
     this.mCurrentState = Fish.eFishState.sPatrol;
 
-    /*
-    var r = new RigidRectangle(this.mFishObj.getXform(), 20, 20);
-    r.setColor([0, 1, 0, 1]);
-    r.setDrawBounds(this.mShowBounds);
-    this.mFishObj.setPhysicsComponent(r);
-    */
 
     // initilize the timer
     this.timerAngry = this.timerAngryGap;
+    
+    //for test
+        for (var i = 0; i < this.mLightArray.length; i++){
+        this.mFish.addLight(this.mLightArray[i]);
+    };
 
 };
 
@@ -78,7 +78,6 @@ Fish.prototype._getRandomPosition = function(){
     var tmpY = 10 + Math.random()*(gWorldHeight-10);
 
     this.setSpeed( (0.7+0.6*Math.random()) * this.kReferenceSpeed);
-    //this.setSpeed(2);
 
     return vec2.fromValues(tmpX, tmpY);
 };
@@ -93,7 +92,7 @@ Fish.prototype._patrol = function(){
         vec2.subtract(toTarget, this.mTargetPosition, this.getXform().getPosition());
         var d = vec2.length(toTarget);
 
-        if(d>80){
+        if(d>100){
             this.rotateObjPointTo(this.mTargetPosition, 0.05); // rotate rather quickly
         }
         else{
@@ -114,7 +113,6 @@ Fish.prototype._wait = function(){
         this.testTimer = 200;
         this.mIsHungry = false;
         this.mCurrentState = Fish.eFishState.sPatrol;
-        gGetScore = true;
     }
 };
 

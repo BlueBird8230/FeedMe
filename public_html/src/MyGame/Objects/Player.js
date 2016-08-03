@@ -1,6 +1,6 @@
 "use strict";
 
-function Player(myCamera, foodTexture, aLevel, aFontFile) {
+function Player(myCamera, foodTexture) {
     
     this.mCamera = myCamera;
     this.mFood = null;
@@ -10,20 +10,11 @@ function Player(myCamera, foodTexture, aLevel, aFontFile) {
 
     this.mFoodPos = null;
     
-    this.timerFeedGap = 100;
+    this.timerFeedGap = 400;
     this.timerFeed = this.timerFeedGap;
 
     // some flages
     this.shootFood = false;
-
-    this.mFontFile = aFontFile;
-    this.mScoreBoard = null;
-
-    this.mNumFoodLeft = aLevel;
-    this.mCurrentLevel = aLevel;
-
-    this.numLevelUp = -1;
-    this.isGameOver = false;
 
     // boundaries.
     this.leftWorldBound = 0.5*gViewWidth;
@@ -57,9 +48,6 @@ Player.prototype.initialize = function(){
     
     this._initializeCameraBBox();
     this._initializeFood();
-
-    this.mScoreBoard = new ScoreBoard(this.mFontFile);
-    this.mScoreBoard.initialize();
    
 };
 
@@ -129,18 +117,6 @@ Player.prototype.update = function() {
     
     this._feed();
     
-    this.mScoreBoard.update();
-
-    if(this.mNumFoodLeft == 0){
-        var score = this.mScoreBoard.getScore() + 1;
-        if(score === this.mCurrentLevel){
-            this.numLevelUp = 1;
-        }   else if(score === this.mCurrentLevel-1){
-            this.numLevelUp = 0;
-        }   else{
-            this.isGameOver = true;
-        }
-    }
 };
 
 Player.prototype._startTimer = function(){
@@ -157,11 +133,9 @@ Player.prototype._feed = function(){
         var mouseXPos = this.mCamera.mouseWCX();
         var mouseYPos = this.mCamera.mouseWCY();
         this.mFoodPos = vec2.fromValues(mouseXPos, mouseYPos);
-        this.mNumFoodLeft -= 1;
-        if(this.mNumFoodLeft >= 0){
-            this.shootFood = true;// to move the food
-            gCanFeed = false;
-        }
+
+        this.shootFood = true;// to move the food
+        gCanFeed = false;
 
         //this.mFood.mRenderComponent.setColor([0, 0, 200, 1]);
     }    
@@ -191,17 +165,8 @@ Player.prototype._shootFoodTowards = function(pos){
 
 Player.prototype.draw = function(){
     this.mFood.draw(this.mCamera);
-    this.mScoreBoard.draw();
 };
 
 Player.prototype.getCameraBBox = function(){
     return this.mCameraBBox;
-};
-
-Player.prototype.LevelUp = function(){
-    return this.numLevelUp;
-};
-
-Player.prototype.GameOver = function(){
-    return this.isGameOver;
 };
