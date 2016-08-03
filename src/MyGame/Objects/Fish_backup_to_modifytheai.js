@@ -81,12 +81,12 @@ Fish.prototype._patrol = function(){
 
    // Continue patrolling!
    GameObject.prototype.update.call(this);
-1
+
    var toTarget = [];
    vec2.subtract(toTarget, this.mTargetPosition, this.getXform().getPosition());
    var d = vec2.length(toTarget);
 
-   if(d>15){
+   if(d>10){
        this.rotateObjPointTo(this.mTargetPosition, 0.05); // rotate rather quickly
     }
     else{
