@@ -143,13 +143,15 @@ MainLevel.prototype.update = function () {
 
     var num = this.mPlayer.LevelUp();
     if(num >= 0){
-        this.nextLevelNum = num;   
-        this.unloadScene();
+        this.nextLevelNum = num;
+        gEngine.GameLoop.stop();
+        //this.unloadScene();
     }
     
     if(this.mPlayer.GameOver()){
         this.mGameOver = true;
-        this.unloadScene;
+        gEngine.GameLoop.stop();
+        //this.unloadScene;
     }
     
 

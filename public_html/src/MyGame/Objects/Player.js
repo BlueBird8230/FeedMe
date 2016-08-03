@@ -132,16 +132,15 @@ Player.prototype.update = function() {
     this.mScoreBoard.update();
 
     if(this.mNumFoodLeft == 0){
-        var score = this.mScoreBoard.getScore();
-        if(score = this.mCurrentLevel){
+        var score = this.mScoreBoard.getScore() + 1;
+        if(score === this.mCurrentLevel){
             this.numLevelUp = 1;
-        }   else if(score = this.mCurrentLevel-1){
+        }   else if(score === this.mCurrentLevel-1){
             this.numLevelUp = 0;
         }   else{
             this.isGameOver = true;
         }
     }
-    
 };
 
 Player.prototype._startTimer = function(){
