@@ -5,10 +5,14 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-function GameOver() {
+function GameOver(currentScore) {
     
     this.kFontFile =  "assets/fonts/Consolas-72";
-    this.mFontRenderable = null;
+    this.mFontRenderableGameOver = null;
+    this.mFontRenderableHighScore = null;
+    //this.mFontRenderableLastScore = null;
+    this.mFontRenderableCurrentScore = null;
+    this.mCurrentScore = currentScore;
     
     this.mCamera = null;
     this.kEndMusic = "assets/end.mp3";
@@ -23,7 +27,7 @@ GameOver.prototype.loadScene = function () {
 
 GameOver.prototype.unloadScene = function () {
     gEngine.AudioClips.unloadAudio(this.kEndMusic);
-
+    gEngine.Fonts.unloadFont(this.kFontFile);
 };
 
 GameOver.prototype.initialize = function () {
@@ -37,12 +41,31 @@ GameOver.prototype.initialize = function () {
         );
     this.mCamera.setBackgroundColor([0.9, 0.9, 0.9, 1]);
     
-    this.mFontRenderable = new FontRenderable('Game Over');
-    this.mFontRenderable.setFont(this.kFontFile);
-    this.mFontRenderable.getXform().setPosition(400, 150);
-    this.mFontRenderable.setColor([100, 0, 0, 1]);
-    this.mFontRenderable.setTextHeight(30);
+    this.mFontRenderableGameOver = new FontRenderable('Game Over');
+    this.mFontRenderableGameOver.setFont(this.kFontFile);
+    this.mFontRenderableGameOver.getXform().setPosition(400, 150);
+    this.mFontRenderableGameOver.setColor([100, 0, 0, 1]);
+    this.mFontRenderableGameOver.setTextHeight(30);
 
+    this.mFontRenderableHighScore = new FontRenderable('The record is '+gHighScore);
+    this.mFontRenderableHighScore.setFont(this.kFontFile);
+    this.mFontRenderableHighScore.getXform().setPosition(400, 110);
+    this.mFontRenderableHighScore.setColor([100, 0, 0, 1]);
+    this.mFontRenderableHighScore.setTextHeight(30);
+
+    /*
+    this.mFontRenderableLastScore= new FontRenderable('The last score is '+gLastScore);
+    this.mFontRenderableLastScore.setFont(this.kFontFile);
+    this.mFontRenderableLastScore.getXform().setPosition(400, 110);
+    this.mFontRenderableLastScore.setColor([100, 0, 0, 1]);
+    this.mFontRenderableLastScore.setTextHeight(30);
+    */
+
+    this.mFontRenderableCurrentScore = new FontRenderable('You got '+this.mCurrentScore+' points.');
+    this.mFontRenderableCurrentScore.setFont(this.kFontFile);
+    this.mFontRenderableCurrentScore.getXform().setPosition(400, 70);
+    this.mFontRenderableCurrentScore.setColor([100, 0, 0, 1]);
+    this.mFontRenderableCurrentScore.setTextHeight(30);
 };
 
 GameOver.prototype.draw = function () {
@@ -50,7 +73,10 @@ GameOver.prototype.draw = function () {
     gEngine.Core.clearCanvas([0.9, 0.9, 0.9, 1]);
     this.mCamera.setupViewProjection();
     
-    this.mFontRenderable.draw(this.mCamera);
+    this.mFontRenderableGameOver.draw(this.mCamera);
+    //this.mFontRenderableLastScore.draw(this.mCamera);
+    this.mFontRenderableHighScore.draw(this.mCamera);
+    this.mFontRenderableCurrentScore.draw(this.mCamera);
 };
 
 GameOver.prototype.update = function () {

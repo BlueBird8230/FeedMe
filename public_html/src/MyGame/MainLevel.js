@@ -76,12 +76,20 @@ MainLevel.prototype.unloadScene = function () {
     gEngine.AudioClips.loadAudio(this.kEndMusic);
 
     if(!this.mChance && this.nextLevelNum===0){
-        var nextLevel = new GameOver();
+        var cScore = this.mPlayer.getCurrentScore();
+        if(cScore > gHighScore){
+            gHighScore = cScore;
+        }
+        var nextLevel = new GameOver(cScore);
         gEngine.Core.startScene(nextLevel);
     }
 
     if(this.mGameOver){
-        var nextLevel = new GameOver();
+        var cScore = this.mPlayer.getCurrentScore();
+        if(cScore > gHighScore){
+            gHighScore = cScore;
+        }
+        var nextLevel = new GameOver(cScore);
         gEngine.Core.startScene(nextLevel);
     }   else {
         this.mNextScore = this.mPlayer.getCurrentScore();

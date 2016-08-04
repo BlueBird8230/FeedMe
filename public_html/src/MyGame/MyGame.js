@@ -19,6 +19,9 @@ var gGetScore = false;
 var gGameOver = false;
 var gAngry = false;
 
+var gHighScore = 0;  // store the highest score.
+var gLastScore = 0; // store the last score.
+
 function MyGame() {
     // The camera to view the scene
     this.mCamera = null;
@@ -42,7 +45,7 @@ MyGame.prototype.unloadScene = function () {
         gEngine.Core.startScene(nextLevel);
     }
     else{
-        var nextLevel = new GameOver();
+        var nextLevel = new GameOver(0);
         gEngine.Core.startScene(nextLevel);
     }
 };
