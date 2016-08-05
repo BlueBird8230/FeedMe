@@ -85,7 +85,7 @@ MyGame.prototype.initialize = function () {
     this.mFontRenderable = new FontRenderable('       Choose one level.');
     this.mFontRenderable.setFont(this.kFontFile);
     this.mFontRenderable.getXform().setPosition(280, 300);
-    this.mFontRenderable.setColor([100, 0, 0, 1]);
+    this.mFontRenderable.setColor([0, 0, 0, 1]);
     this.mFontRenderable.setTextHeight(25);
 
     // initialize buttons
