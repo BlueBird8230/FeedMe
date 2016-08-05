@@ -11,6 +11,7 @@ var gWorldWidth = 960;
 var gWorldHeight = 540;
 var gViewWidth = 640;
 var gViewHeight = 360;
+var gZj = 700;
 
 var gCanFeed = true;
 var gCanShoot = false;

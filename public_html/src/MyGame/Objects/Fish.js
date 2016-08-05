@@ -50,6 +50,7 @@ function Fish(x, y, aCamera, aTexture, myLightArray, aCueRight, aCueLeft) {
 
 
    // this._computeNextState();
+
 }
 gEngine.Core.inheritPrototype(Fish, GameObject);
 
@@ -118,7 +119,7 @@ Fish.prototype._patrol = function(){
 Fish.prototype._wait = function(){
     /*
     if(this.testTimer === this.waitTimerGap)
-        gEngine.AudioClips.playACue(this.kScore);
+        
     this.testTimer -= 1;
     if(this.testTimer <= 0){
         this.testTimer = this.waitTimerGap;

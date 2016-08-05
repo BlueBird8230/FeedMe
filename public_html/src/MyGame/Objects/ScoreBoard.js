@@ -23,24 +23,24 @@ ScoreBoard.prototype.initialize = function(){
     this.mCamera = new Camera(
         vec2.fromValues(25, 16),
         50,
-        [680, 250, 250, 160]
+        [770, 430, 180, 100]
         );
-    this.mCamera.setBackgroundColor([0.8, 0.8, 0.8, 1]);
+    this.mCamera.setBackgroundColor([0.4, 0.4, 0.4, 0.3]);
     
     this.mString = 'current score: '+ this.mScore;
     this.mFontRenderable = new FontRenderable(this.mString);
     this.mFontRenderable.setFont(this.mFontFile);
-    this._initText(this.mFontRenderable, 8, 24, [120, 0, 0, 1], 4);
+    this._initText(this.mFontRenderable, 6, 20, [0, 50, 0, 1], 4.5);
 
     this.mString = 'current level: '+ this.mCurrentLevel;
     this.mFontRenderableLevel = new FontRenderable(this.mString);
     this.mFontRenderableLevel.setFont(this.mFontFile);
-    this._initText(this.mFontRenderableLevel, 8, 28, [120, 0, 0, 1], 4);
+    this._initText(this.mFontRenderableLevel, 6, 25, [0, 50, 0, 1], 4.5);
       
     this.mString = String(this.mCurrentLevel)+" fishes to pass.";
     this.mFontRenderableTip = new FontRenderable(this.mString);
     this.mFontRenderableTip.setFont(this.mFontFile);
-    this._initText(this.mFontRenderableTip, 8, 20, [120, 0, 0, 1], 4);
+    this._initText(this.mFontRenderableTip, 6, 15, [0, 50, 0, 1], 4.5);
 
     if(this.mChance){
         this.mString = String(this.mCurrentLevel-1)+" fishes to stay.";
@@ -49,7 +49,7 @@ ScoreBoard.prototype.initialize = function(){
     }
     this.mFontRenderableTip2 = new FontRenderable(this.mString);
     this.mFontRenderableTip2.setFont(this.mFontFile);
-    this._initText(this.mFontRenderableTip2, 8, 16, [120, 0, 0, 1], 4);
+    this._initText(this.mFontRenderableTip2, 6, 10, [0, 50, 0, 1], 4.5);
 };
 
 ScoreBoard.prototype.draw = function(){

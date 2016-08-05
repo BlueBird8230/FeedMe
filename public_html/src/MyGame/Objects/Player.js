@@ -6,6 +6,8 @@ function Player(myCamera, foodTexture, aLevel, aFontFile, iniScore, aChance) {
     this.mFood = null;
     this.mFoodTexture = foodTexture;
 
+    this.kScore = "assets/score.wav";
+
     this.mCameraBBox = null;
 
     this.mFoodPos = null;
@@ -31,16 +33,15 @@ function Player(myCamera, foodTexture, aLevel, aFontFile, iniScore, aChance) {
     this.isGameOver = false;
 
     // boundaries.
-    this.leftWorldBound = 0.5*gViewWidth;
-    this.rightWorldBound = gWorldWidth - 0.5*gViewWidth;
-    this.upWorldBound = gWorldHeight - 0.5*gViewHeight;
-    this.downWorldBound = 0.5*gViewHeight;
-
+    this.leftWorldBound = 350;
+    this.rightWorldBound = gWorldWidth - 350;
+    this.upWorldBound = gWorldHeight - 0.5*gViewHeight+10;
+    this.downWorldBound = 0.5*gViewHeight-10;
 
     this.mLock = true;
 }
 
-Player.prototype._initializeFood = function(){
+Player.prototype._initializeFood = function() {
     var mRenderable = new LightRenderable(this.mFoodTexture);
     //mRenderable.setColor([0, 5, 2, 1]);
     
@@ -58,7 +59,7 @@ Player.prototype._initializeFood = function(){
 
 Player.prototype._initializeCameraBBox = function(){
     this.mCameraBBox = new Renderable();
-    this.mCameraBBox.setColor([0.7, 0.7, 0.7, 0.5]);
+    this.mCameraBBox.setColor([0.9, 0.9, 0.9, 0.3]);
     var center = this.mCamera.getWCCenter();
     var XPos = center[0];
     var YPos = center[1];
@@ -212,6 +213,7 @@ Player.prototype._shootFoodTowards = function(pos){
         this.mScoreBoard.changeScore(1);
         this.mNumFoodLeft -= 1;
         this.mLock = false;
+        gEngine.AudioClips.playACue(this.kScore);
     }
     
     if(d > 1 && this.mLock){
@@ -228,7 +230,7 @@ Player.prototype._shootFoodTowards = function(pos){
 
 Player.prototype.draw = function(){
     this.mFood.draw(this.mCamera);
-    this.mScoreBoard.draw();
+    //this.mScoreBoard.draw();
 };
 
 Player.prototype.getCameraBBox = function(){

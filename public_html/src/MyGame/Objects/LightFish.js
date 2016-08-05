@@ -7,7 +7,7 @@ function LightFish(x, y, aCamera, aTexture) {
 
     this.mFish = new LightRenderable(aTexture);
     
-    this.mFishRadius = 60;
+    this.mFishRadius = 30;
     this.mFishObj = new GameObject(this.mFish);
     GameObject.call(this, this.mFishObj);
 
@@ -29,15 +29,15 @@ function LightFish(x, y, aCamera, aTexture) {
 gEngine.Core.inheritPrototype(LightFish, Fish);
 
 LightFish.prototype._initializeLight = function(){
-    this.mLight = new Light();
+    	this.mLight = new Light();
 	this.mLight.setLightType(Light.eLightType.ePointLight);
 	this.mLight.setColor([0, 1, 1, 1]);
-	this.mLight.setXPos(this.xPos);
-	this.mLight.setYPos(this.yPos);
-	this.mLight.setZPos(-1);
-	this.mLight.setNear(40);
+	this.mLight.setXPos(0.5*gWorldWidth);
+	this.mLight.setYPos(0.5*gWorldHeight);
+	this.mLight.setZPos(0);
+	this.mLight.setNear(20);
 	this.mLight.setFar(60);
-	this.mLight.setIntensity(10);
+	this.mLight.setIntensity(2);
     //this.mFish.addLight(this.mLight);
 };
 
