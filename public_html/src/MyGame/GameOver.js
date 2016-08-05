@@ -42,7 +42,8 @@ GameOver.prototype.unloadScene = function () {
     gEngine.Textures.unloadTexture(this.mReturnTextureOver);
 
 
-    var nextLevel = new MainLevel(3, 0, true);
+    //var nextLevel = new MainLevel(3, 0, true);
+    var nextLevel = new MyGame();
     gEngine.Core.startScene(nextLevel);
 };
 
@@ -86,7 +87,7 @@ GameOver.prototype.initialize = function () {
     this.mReturnButton = new Button(this.mReturnTexture, this.mReturnTextureOver);
     this.mReturnButton.initialize(
                                     [this.mReturnButtonPosX, this.mReturnButtonPosY],
-                                    this.mReturnButtonWidth
+                                    this.mReturnButtonWidth, this.mReturnButtonHeight
                                     );
 };
 
