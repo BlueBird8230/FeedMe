@@ -27,6 +27,8 @@ function MyGame() {
     this.mCamera = null;
 
     this.kFontFile =  "assets/fonts/Consolas-72";
+    this.kLogoFile = "assets/Logo.png";
+    this.mLogoRenderable = null;
     this.mFontRenderable = null;
     this.ifQuit = false;
 
@@ -42,6 +44,7 @@ gEngine.Core.inheritPrototype(MyGame, Scene);
 
 MyGame.prototype.loadScene = function () {
     gEngine.Fonts.loadFont(this.kFontFile);
+    gEngine.Textures.loadTexture(this.kLogoFile);
     //gEngine.Fonts.loadFont(this.kFontFile);
     for(var i=3; i<9; i++){
         gEngine.Textures.loadTexture("assets/buttons/level"+String(i)+".png");
@@ -51,6 +54,7 @@ MyGame.prototype.loadScene = function () {
 
 MyGame.prototype.unloadScene = function () {
     gEngine.Fonts.unloadFont(this.kFontFile);
+    gEngine.Textures.unloadTexture(this.kLogoFile);
     for(var i=3; i<9; i++){
         gEngine.Textures.unloadTexture("assets/buttons/level"+String(i)+".png");
         gEngine.Textures.unloadTexture("assets/buttons/level"+String(i)+"o.png");
@@ -65,14 +69,20 @@ MyGame.prototype.initialize = function () {
     this.mCamera = new Camera(
         vec2.fromValues(0.5*gWorldWidth, 0.5*gWorldHeight),
         gWorldWidth,
-        [0, 180, gWorldWidth, gWorldHeight]
+        [0, 0, gWorldWidth, gWorldHeight]
         );
-    this.mCamera.setBackgroundColor([0.9, 0.9, 0.9, 1]);
+    this.mCamera.setBackgroundColor([0, 1, 1, 1]);
     
+    this.mLogoRenderable = new Background(this.mCamera, this.kLogoFile);
+    this.mLogoRenderable.initialize(
+        [480, 240],
+        [0.5*gWorldWidth, 0.5*gWorldHeight+120]
+        );
+
     //this.mFontRenderable = new FontRenderable('Press P to start. Press Q to exit');
     this.mFontRenderable = new FontRenderable('       Choose one level.');
     this.mFontRenderable.setFont(this.kFontFile);
-    this.mFontRenderable.getXform().setPosition(280, 200);
+    this.mFontRenderable.getXform().setPosition(280, 300);
     this.mFontRenderable.setColor([100, 0, 0, 1]);
     this.mFontRenderable.setTextHeight(25);
 
@@ -84,14 +94,14 @@ MyGame.prototype.initialize = function () {
         if(i<6){
             var tmpButton = new Button(this.mButtonFiles[i-3], this.mButtonFilesOver[i-3]);
             tmpButton.initialize(
-                [400+80*(i-3), 110],
+                [400+80*(i-3), 210],
                 this.mButtonWid, this.mButtonWid
                 );
             this.mButtons.push(tmpButton);
         }   else{
             var tmpButton = new Button(this.mButtonFiles[i-3], this.mButtonFilesOver[i-3]);
             tmpButton.initialize(
-                [400+80*(i-6), 40],
+                [400+80*(i-6), 140],
                 this.mButtonWid, this.mButtonWid
                 );
             this.mButtons.push(tmpButton);
@@ -109,6 +119,8 @@ MyGame.prototype.draw = function () {
     for(var i=0; i<this.mButtons.length; i++){
         this.mButtons[i].draw(this.mCamera);
     }
+
+    this.mLogoRenderable.draw(this.mCamera);
 };
 
 MyGame.prototype.update = function () {

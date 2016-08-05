@@ -41,3 +41,8 @@ Background.prototype.setPosition = function(x, y){
 Background.prototype.getRenderable = function(){
     return this.mBg;
 };
+
+Background.prototype.move = function(x, y){
+    this.mBgObj.getXform().incXPosBy(x);
+    this.mBgObj.getXform().incYPosBy(y);
+};

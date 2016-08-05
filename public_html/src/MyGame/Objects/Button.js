@@ -14,7 +14,7 @@ function Button(texture, textureOver) {
 
 Button.prototype.initialize = function(rPos, rWid, rHei){
     
-    this.mBotton = new TextureRenderable(this.mBottonTexture);
+    this.mBotton = new Background(this.myCamera, this.mBottonTexture);
     this.setSize(rWid, rHei);
     this.setPosition(rPos);
     
