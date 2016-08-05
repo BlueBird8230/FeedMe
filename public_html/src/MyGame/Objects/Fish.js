@@ -51,6 +51,8 @@ function Fish(x, y, aCamera, aTexture, myLightArray, aCueRight, aCueLeft) {
 
    // this._computeNextState();
 
+   // waiting fishes.
+   this.mWaitingFishes = [];
 }
 gEngine.Core.inheritPrototype(Fish, GameObject);
 

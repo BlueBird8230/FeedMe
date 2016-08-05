@@ -71,7 +71,7 @@ MyGame.prototype.initialize = function () {
         gWorldWidth,
         [0, 0, gWorldWidth, gWorldHeight]
         );
-    this.mCamera.setBackgroundColor([0, 1, 1, 1]);
+    this.mCamera.setBackgroundColor([1, 1, 1, 1]);
     
     this.mLogoRenderable = new Background(this.mCamera, this.kLogoFile);
     this.mLogoRenderable.initialize(
@@ -112,7 +112,7 @@ MyGame.prototype.initialize = function () {
 
 MyGame.prototype.draw = function () {
 
-    gEngine.Core.clearCanvas([0.9, 0.9, 0.9, 1]);
+    gEngine.Core.clearCanvas([1, 1, 1, 1]);
     this.mCamera.setupViewProjection();
     this.mFontRenderable.draw(this.mCamera);
 
@@ -144,10 +144,10 @@ MyGame.prototype.update = function () {
             var tmpY = 0;
             if(i<6){
                 tmpX = 400 + 80*(i-3);
-                tmpY = 110;
+                tmpY = 210;
             }   else{
                 tmpX = 400 + 80*(i-6);
-                tmpY = 40;
+                tmpY = 140;
             }
             if(
                 xMouse > (tmpX-0.5*this.mButtonWid) && 

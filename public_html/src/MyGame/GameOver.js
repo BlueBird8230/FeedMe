@@ -15,12 +15,15 @@ function GameOver(currentScore) {
     this.kEndMusic = "assets/end.mp3";
 
     this.mReturnButton = null;
-    this.mReturnButtonWidth = 64;
-    this.mReturnButtonHeight = 32;
-    this.mReturnButtonPosX = 300;
-    this.mReturnButtonPosY = 70;
-    this.mReturnTexture = "assets/button.png";
-    this.mReturnTextureOver = "assets/button_over.png";
+    this.mReturnButtonWidth = 100;
+    this.mReturnButtonHeight = 50;
+    this.mReturnButtonPosX = 500;
+    this.mReturnButtonPosY = 80;
+    this.mReturnTexture = "assets/restart_button.png";
+    this.mReturnTextureOver = "assets/restartOver_button.png";
+
+    this.mGameOver = "assets/GameOverMain.png";
+    this.mGameOverRenderable = null;
     
     this.mFontRenderableCurrentScore = null;
     this.mCurrentScore = currentScore;
@@ -33,6 +36,7 @@ GameOver.prototype.loadScene = function () {
     gEngine.AudioClips.loadAudio(this.kEndMusic);
     gEngine.Textures.loadTexture(this.mReturnTexture);
     gEngine.Textures.loadTexture(this.mReturnTextureOver);
+    gEngine.Textures.loadTexture(this.mGameOver);
 };
 
 GameOver.prototype.unloadScene = function () {
@@ -40,6 +44,7 @@ GameOver.prototype.unloadScene = function () {
     gEngine.Fonts.unloadFont(this.kFontFile);
     gEngine.Textures.unloadTexture(this.mReturnTexture);
     gEngine.Textures.unloadTexture(this.mReturnTextureOver);
+    gEngine.Textures.unloadTexture(this.mGameOver);
 
 
     //var nextLevel = new MainLevel(3, 0, true);
@@ -54,20 +59,22 @@ GameOver.prototype.initialize = function () {
     this.mCamera = new Camera(
         vec2.fromValues(0.5*gWorldWidth, 0.5*gWorldHeight),
         gWorldWidth,
-        [0, 180, gWorldWidth, gWorldHeight]
+        [0, 0, gWorldWidth, gWorldHeight]
         );
     this.mCamera.setBackgroundColor([0.9, 0.9, 0.9, 1]);
     
+    /*
     this.mFontRenderableGameOver = new FontRenderable('Game Over');
     this.mFontRenderableGameOver.setFont(this.kFontFile);
     this.mFontRenderableGameOver.getXform().setPosition(400, 150);
     this.mFontRenderableGameOver.setColor([100, 0, 0, 1]);
     this.mFontRenderableGameOver.setTextHeight(30);
+    */
 
     this.mFontRenderableHighScore = new FontRenderable('The record is '+gHighScore);
     this.mFontRenderableHighScore.setFont(this.kFontFile);
-    this.mFontRenderableHighScore.getXform().setPosition(400, 110);
-    this.mFontRenderableHighScore.setColor([100, 0, 0, 1]);
+    this.mFontRenderableHighScore.getXform().setPosition(350, 210);
+    this.mFontRenderableHighScore.setColor([0, 0, 0, 1]);
     this.mFontRenderableHighScore.setTextHeight(30);
 
     /*
@@ -80,8 +87,9 @@ GameOver.prototype.initialize = function () {
 
     this.mFontRenderableCurrentScore = new FontRenderable('You got '+this.mCurrentScore+' points.');
     this.mFontRenderableCurrentScore.setFont(this.kFontFile);
-    this.mFontRenderableCurrentScore.getXform().setPosition(400, 70);
-    this.mFontRenderableCurrentScore.setColor([100, 0, 0, 1]);
+    this.mFontRenderableCurrentScore.getXform().setPosition(350, 170);
+    //this.mFontRenderableCurrentScore.setColor([173/256, 37/256, 116/256, 1]);
+    this.mFontRenderableCurrentScore.setColor([0, 0, 0, 1]);
     this.mFontRenderableCurrentScore.setTextHeight(30);
 
     this.mReturnButton = new Button(this.mReturnTexture, this.mReturnTextureOver);
@@ -89,6 +97,11 @@ GameOver.prototype.initialize = function () {
                                     [this.mReturnButtonPosX, this.mReturnButtonPosY],
                                     this.mReturnButtonWidth, this.mReturnButtonHeight
                                     );
+
+    this.mGameOverRenderable = new Background(this.mCamera, this.mGameOver);
+    this.mGameOverRenderable.initialize(
+        [512, 256], [0.5*gWorldWidth, 0.5*gWorldHeight+100]
+        );
 };
 
 GameOver.prototype.draw = function () {
@@ -96,11 +109,13 @@ GameOver.prototype.draw = function () {
     gEngine.Core.clearCanvas([0.9, 0.9, 0.9, 1]);
     this.mCamera.setupViewProjection();
     
-    this.mFontRenderableGameOver.draw(this.mCamera);
+    //this.mFontRenderableGameOver.draw(this.mCamera);
     //this.mFontRenderableLastScore.draw(this.mCamera);
     this.mFontRenderableHighScore.draw(this.mCamera);
     this.mFontRenderableCurrentScore.draw(this.mCamera);
     this.mReturnButton.draw(this.mCamera);
+
+    this.mGameOverRenderable.draw(this.mCamera);
 };
 
 GameOver.prototype.update = function () {
