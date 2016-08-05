@@ -15,12 +15,14 @@ var gViewHeight = 360;
 var gCanFeed = true;
 var gCanShoot = false;
 
-var gGetScore = false;
+//var gGetScore = false;
 var gGameOver = false;
 var gAngry = false;
 
 var gHighScore = 0;  // store the highest score.
 var gLastScore = 0; // store the last score.
+
+var gWaitingFishes = [];
 
 function MyGame() {
     // The camera to view the scene

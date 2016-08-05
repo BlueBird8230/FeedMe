@@ -61,10 +61,12 @@ ScoreBoard.prototype.draw = function(){
 };
 
 ScoreBoard.prototype.update = function() { 
+    /*
     if(gGetScore){
         this.changeScore(1);
         gGetScore = false;
     }
+    */
     this.mFontRenderable.setText('current score: '+this.mScore);    
     this.mFontRenderableLevel.setText('current level: '+this.mCurrentLevel);    
 };

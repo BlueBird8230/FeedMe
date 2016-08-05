@@ -35,6 +35,9 @@ function Player(myCamera, foodTexture, aLevel, aFontFile, iniScore, aChance) {
     this.rightWorldBound = gWorldWidth - 0.5*gViewWidth;
     this.upWorldBound = gWorldHeight - 0.5*gViewHeight;
     this.downWorldBound = 0.5*gViewHeight;
+
+
+    this.mLock = true;
 }
 
 Player.prototype._initializeFood = function(){
@@ -140,7 +143,7 @@ Player.prototype.update = function() {
     }
     
     this._feed();
-    
+//    var i = gGetScore;
     this.mScoreBoard.update();
 
     if(gAngry){
@@ -175,10 +178,10 @@ Player.prototype._feed = function(){
         var mouseXPos = this.mCamera.mouseWCX();
         var mouseYPos = this.mCamera.mouseWCY();
         this.mFoodPos = vec2.fromValues(mouseXPos, mouseYPos);
-        this.mNumFoodLeft -= 1;
         if(this.mNumFoodLeft >= 0){
             this.shootFood = true;// to move the food
             gCanFeed = false;
+            this.mLock = true;
         }
 
         //this.mFood.mRenderComponent.setColor([0, 0, 200, 1]);
@@ -197,14 +200,30 @@ Player.prototype._shootFoodTowards = function(pos){
     vec2.subtract(sub, pos, this.mFood.getXform().getPosition());
        
     var d = vec2.length(sub);
-    if(d > 2){
+
+    var fish = gWaitingFishes.pop();
+    var fishObj = fish.getObject();
+    var h = [];
+    if(this.mFood.pixelTouches(fishObj, h)){
+        this.shootFood = false;
+        fish.getFed();
+        this.mFood.setVisibility(false);
+        //this.mFood = null;
+        this.mScoreBoard.changeScore(1);
+        this.mNumFoodLeft -= 1;
+        this.mLock = false;
+    }
+    
+    if(d > 1 && this.mLock){
             this.mFood.getXform().incXPosBy(sub[0]*0.1);
             this.mFood.getXform().incYPosBy(sub[1]*0.1);
     }
+    /*
     else {
             this.shootFood = false;
             this.mFood.setVisibility(false);
     }
+    */
 };
 
 Player.prototype.draw = function(){

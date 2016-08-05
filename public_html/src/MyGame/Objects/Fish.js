@@ -50,9 +50,6 @@ function Fish(x, y, aCamera, aTexture, myLightArray, aCueRight, aCueLeft) {
 
 
    // this._computeNextState();
-
-   // waiting fishes.
-   this.mWaitingFishes = [];
 }
 gEngine.Core.inheritPrototype(Fish, GameObject);
 
@@ -119,6 +116,7 @@ Fish.prototype._patrol = function(){
 };
 
 Fish.prototype._wait = function(){
+    /*
     if(this.testTimer === this.waitTimerGap)
         gEngine.AudioClips.playACue(this.kScore);
     this.testTimer -= 1;
@@ -127,6 +125,13 @@ Fish.prototype._wait = function(){
         this.mIsHungry = false;
         this.mCurrentState = Fish.eFishState.sPatrol;
     }
+    */
+    gWaitingFishes.push(this);
+};
+
+Fish.prototype.getFed = function(){
+    this.mIsHungry = false;
+    this.mCurrentState = Fish.eFishState.sPatrol;
 };
 
 Fish.prototype._angry = function(){
@@ -166,12 +171,14 @@ Fish.prototype.update = function(){
         vec2.subtract(sub, pos, this.mFishObj.getXform().getPosition());
         var d = vec2.length(sub);
         if(d < this.mFishRadius){
+             this.mIsClicked = true;
             //this.mFishObj.getXform().setSize(50, 50);
             if(this.mIsHungry){
-                gGetScore = true;
+//                gGetScore = true;
                 gCanShoot = true;
+                this._patrol();
             }
-            this.mIsClicked = true;
+           
         }
 
     }
@@ -188,4 +195,8 @@ Fish.prototype.update = function(){
     }
 
     //gEngine.Physics.processObjObj(this.mPlatformObject, this.mMinionObject);
+};
+
+Fish.prototype.getObject = function(){
+    return this.mFishObj;
 };
